@@ -11,7 +11,8 @@ class Board
     ones_and_zeroes.each_slice(8).map{ |line| line.reverse.join(' ') }.join("\n")
   end
 
-  def one(x, y)
+  def one(x, y = nil)
+    x, y = symbol_to_x_y(x) if x.is_a?(Symbol)
     return if x < 0 || x > 7 || y < 0 || y > 7
     shift = x + (y * 8)
     @integer = @integer | (1 << shift)
@@ -23,6 +24,11 @@ class Board
 
   def inspect
     "\n" + to_s
+  end
+
+  def symbol_to_x_y(symbol)
+    x_name, y_name = symbol.to_s.split('')
+    return x_name.ord - 97, y_name.to_i - 1
   end
 
   def self.map_positions
