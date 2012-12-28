@@ -10,9 +10,7 @@ class King
       b.one(x + 1, y - 1)
       b.one(x + 1, y)
       b.one(x + 1, y + 1)
-      puts b
-      puts
-      b.to_i
+      b
     end
 	end
 end

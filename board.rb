@@ -7,8 +7,7 @@ class Board
   end
 
   def to_s
-    ones_and_zeroes = @integer.to_s(2).rjust(64, '0').each_char
-    ones_and_zeroes.each_slice(8).map{ |line| line.reverse.join(' ') }.join("\n")
+    to_a.each_slice(8).map{ |line| line.join(' ') }.join("\n")
   end
 
   def one(x, y = nil)
@@ -16,6 +15,24 @@ class Board
     return if x < 0 || x > 7 || y < 0 || y > 7
     shift = x + (y * 8)
     @integer = @integer | (1 << shift)
+    self
+  end
+
+  def self.place_piece(*positions)
+    b = Board.new(0)
+    positions.each do |position|
+      b.one(position)
+    end
+    b
+  end
+
+  def positions
+    @integer.to_s(2).reverse.chars.with_index.map{|a, i| i if a == '1'}.compact
+  end
+
+  def to_a
+    ones_and_zeroes = @integer.to_s(2).rjust(64, '0').each_char
+    ones_and_zeroes.each_slice(8).flat_map{ |line| line.reverse }
   end
 
   def to_i
@@ -23,7 +40,7 @@ class Board
   end
 
   def inspect
-    "\n" + to_s
+    "Board 0x#{@integer.to_s(16)}\n" + to_s
   end
 
   def symbol_to_x_y(symbol)

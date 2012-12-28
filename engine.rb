@@ -1,34 +1,35 @@
 class Engine
   require_relative 'board'
+  require_relative 'board_collator'
+  require_relative 'king'
+  require_relative 'horse'
 
   def initialize
+    @white_king = Board.place_piece(:e1)
+    @white_horses = Board.place_piece(:b1, :g1)
+    @black_king = Board.place_piece(:e8)
+    @black_horses = Board.place_piece(:b8, :g8)
+
+    @white_pieces = {'K' => @white_king, 'H' => @white_horses}
+    @black_pieces = {'k' => @black_king, 'h' => @black_horses}
+    @pieces = @white_pieces.merge(@black_pieces)
   end
 
-  def kings
-    board = Board.new(0)
-    board.one(:e1)
-    board.one(:e8)
-    board
+  def tick
+    puts BoardCollator.new(@pieces)
+    # move_black
   end
 
-  def horses
-    board = Board.new(0)
-    board.one(:b1)
-    board.one(:g1)
-    board.one(:b8)
-    board.one(:g8)
-    board
-  end
-
-  def white_pieces
-    board = Board.new(0)
-    Board.map_positions { |x, y| board.one(x, y) if y == 0 || y == 1 }
-    board
-  end
-
-  def black_pieces
-    board = Board.new(0)
-    Board.map_positions { |x, y| board.one(x, y) if y == 6 || y == 7 }
-    board
+  def next_moves(pieces = @black_pieces)
+    pieces.flat_map do |piece, board|
+      board.positions.map do |position|
+        puts [piece, position]
+        if piece == 'k'
+          King.new.possible_moves[position]
+        elsif piece == 'h'
+          Horse.new.possible_moves[position]
+        end
+      end
+    end
   end
 end
